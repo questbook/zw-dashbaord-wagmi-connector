@@ -10,7 +10,10 @@ interface Props {
     projectId: string;
 }
 
-const fetcher = (input: RequestInfo | URL, init?: RequestInit) => fetch(input, init).then((res) => res.json())
+const fetcher = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const res = await fetch(input, init);
+    return await res.json();
+}
 
 export default function GasTanks({ projectId }: Props) {
     const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes()
@@ -18,6 +21,7 @@ export default function GasTanks({ projectId }: Props) {
         [
             `localhost:3000/api/dashboard/projects/${projectId}/gasTanks`,
             {
+                method: 'POST',
                 body: {
                     ...ownerAndWebHookAttributes,
                 },
