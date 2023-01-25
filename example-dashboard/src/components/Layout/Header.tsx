@@ -6,11 +6,6 @@ import { Connector, useAccount, useConnect } from "wagmi";
 // header component with wagmi connect button
 export default function Header() {
     const { address, isConnected } = useAccount();
-    const { connect, connectors } = useConnect();
-
-    const handleConnect = async () => {
-        connect({ connector: connectors[0] });
-    };
 
     return (
         <header>
@@ -23,8 +18,8 @@ export default function Header() {
                 m='1rem'
             >
                 <Flex>
-                    <Heading as="h1" size="lg" color="white" mr="1rem">
-                        Wagmi
+                    <Heading as="h1" size="lg" color="Highlight" mr="1rem">
+                        Zero Wallet Dashboard
                     </Heading>
                 </Flex>
                 <Flex
@@ -32,14 +27,7 @@ export default function Header() {
                     alignItems="center"
                     justifyContent={isConnected ? "flex-end" : "center"}
                     >
-                    <Text>{isConnected && address}</Text>
-                    <Button
-                        colorScheme="blue"
-                        mr="1rem"
-                        onClick={() => handleConnect()}
-                    >
-                        Connect
-                    </Button>
+                    <Text pr={"5rem"} color="Highlight">{isConnected ? address : "Disconnected"}</Text>
                 </Flex>
             </Flex>
         </header>
