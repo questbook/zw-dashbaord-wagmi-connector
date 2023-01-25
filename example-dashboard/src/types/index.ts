@@ -34,5 +34,5 @@ export interface IBase {
 
 export interface NewProject extends IBase {
     name: string;
-    allowed_origins: string[];
+    allowedOrigins: string[];
 }
