@@ -5,34 +5,28 @@ import { GasTankType } from "../../types";
 import { Flex } from "@chakra-ui/react";
 import GasTank from "./GasTanks";
 import GasTankCreator from "./GasTankCreator";
+import { postFetcher } from "../../utils/fetchers";
 
 interface Props {
     projectId: string;
 }
 
-const fetcher = async (input: RequestInfo | URL, init?: RequestInit) => {
-    const res = await fetch(input, init);
-    return await res.json();
-}
 
 export default function GasTanks({ projectId }: Props) {
     const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes()
     const { data, error, mutate } = useSWR<GasTankType[]>(
         [
             `localhost:3000/api/dashboard/projects/${projectId}/gasTanks`,
-            {
-                method: 'POST',
-                body: {
-                    ...ownerAndWebHookAttributes,
-                },
-            },
+            ownerAndWebHookAttributes,
         ],
-        fetcher);
+        postFetcher);
 
     const onCreate = () => {
         mutate();
     }
 
+
+    if (!ownerAndWebHookAttributes) return <div>loading...</div>
     if (error) return <div>Failed to load</div>
     if (!data) return <div>Loading...</div>
 

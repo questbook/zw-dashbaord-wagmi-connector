@@ -6,28 +6,18 @@ import useSWR from 'swr'
 import ProjectCreator from './ProjectCreator';
 import Project from './project';
 import useOwnerAndWebHookAttributes from '../../hooks/useOwnerAndWebHookAttributes';
+import { postFetcher } from '../../utils/fetchers';
 
-const fetcher = async (input: RequestInfo | URL, init: any) => {
-    console.log("init", init)
-    const res = await fetch(input, init);
-    return await res.json();
-};
-
+const urlApi = 'http://localhost:3000/api/dashboard/projects';
 
 export default function Projects() {
     const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes()
-    // const [data, setData] = React.useState<ProjectType[]>([])
-    const { data, error, mutate } = useSWR<ProjectType[]>(
+    const { data, error, mutate } = useSWR<ProjectType[] | null>(
         [
-            'http://localhost:3000/api/dashboard/projects',
-            {
-                method: 'POST',
-                body: {
-                    ...ownerAndWebHookAttributes,
-                },
-            },
-        ], 
-        fetcher);
+            urlApi,
+            ownerAndWebHookAttributes,
+        ],
+        postFetcher);
 
     // React.useEffect
 
@@ -35,6 +25,7 @@ export default function Projects() {
         mutate();
     }
 
+    if (!ownerAndWebHookAttributes) return <div>Loading...</div>
     if (error) return <div>Failed to load</div>
     if (!data) return <div>Loading...</div>
 
