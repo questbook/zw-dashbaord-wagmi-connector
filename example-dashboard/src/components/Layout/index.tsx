@@ -1,4 +1,5 @@
 import Header from './Header'
+import NavBar from './NavBar';
 
 type DashboardLayoutProps = {
     children: React.ReactNode,
@@ -8,7 +9,9 @@ export default function Layout({ children }: DashboardLayoutProps) {
     return (
         <>
             <Header />
-            <main>{children}</main>
+            <NavBar >
+                <main>{children}</main>
+            </NavBar>
         </>
     )
 }
