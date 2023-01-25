@@ -1,11 +1,13 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { getDefaultProvider } from 'ethers';
 import type { AppProps } from 'next/app';
+import { useEffect } from 'react';
 import { chain,createClient, WagmiConfig } from 'wagmi';
 import {
     RecoveryConfig,
     ZeroWalletConnector,
     ZeroWalletConnectorOptions} from 'zero-wallet-wagmi-connector';
+import Layout from '../src/components/Layout';
 // import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 // const googleRecoveryOption: RecoveryConfig = {
@@ -28,7 +30,7 @@ const zeroWalletConnectorOptions: ZeroWalletConnectorOptions = {
     store: 'browser',
     zeroWalletServerDomain: process.env.NEXT_PUBLIC_BACKEND_DOMAIN!,
     zeroWalletProjectApiKey: process.env.NEXT_PUBLIC_ZERO_WALLET_API_KEY!,
-    gasTankName: 'testGasTankName',
+    gasTankName: 'testnet',
     recovery: metamaskRecoveryOption
 }
 
@@ -57,7 +59,9 @@ export default function App({ Component, pageProps }: AppProps) {
     return (
         <WagmiConfig client={client}>
             <ChakraProvider>
-                <Component {...pageProps} />
+                <Layout>
+                    <Component {...pageProps} />
+                </Layout>
             </ChakraProvider>
         </WagmiConfig>
     );
