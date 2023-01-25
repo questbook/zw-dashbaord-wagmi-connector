@@ -288,14 +288,15 @@ export class ZeroWalletSigner {
         }
 
         this.gasTankName = gasTankName;
-        const baseUrl = `${zeroWalletServerDomain}/api/${zeroWalletProjectApiKey}`;
+        const baseUrlAuth = `${zeroWalletServerDomain}/api/auth/${zeroWalletProjectApiKey}`;
+        const baseUrlTx = `${zeroWalletServerDomain}/api/tx/${zeroWalletProjectApiKey}`;
         this.zeroWalletServerEndpoints = {
-            nonceProvider: baseUrl + '/auth/getNonce',
-            nonceRefresher: baseUrl + '/auth/refreshNonce',
-            authorizer: baseUrl + '/auth/authorize',
-            gasStation: baseUrl + '/tx/send',
-            transactionBuilder: baseUrl + '/tx/build',
-            scwDeployer: baseUrl + '/tx/deploy'
+            nonceProvider: baseUrlAuth + '/getNonce',
+            nonceRefresher: baseUrlAuth + '/refreshNonce',
+            authorizer: baseUrlAuth + '/authorize',
+            gasStation: baseUrlTx + '/send',
+            transactionBuilder: baseUrlTx + '/build',
+            scwDeployer: baseUrlTx + '/deploy'
         };
 
         this.store = store;
@@ -365,6 +366,10 @@ export class ZeroWalletSigner {
                 new ethers.Wallet(zeroWalletPrivateKey)
             );
         }
+    }
+
+    getScwAddress(): string {
+        return this.scwAddress || '';
     }
 
     async changeZeroWallet(newZeroWallet: ethers.Wallet) {
@@ -908,7 +913,7 @@ export class ZeroWalletSigner {
                 zeroWalletAddress: this.zeroWallet.address,
                 signature,
                 webHookAttributes,
-                gasTankName: this.gasTankName
+                chainId: transactionWithChainId.chainId.toString()
             }
         );
 
@@ -982,13 +987,29 @@ export class ZeroWalletSigner {
 
         if (nonce) return nonce;
 
-        const response = await axios.post(
+        const chainId = this.getProvider().zeroWalletNetwork.chainId.toString();
+
+        let response = await axios.post(
             this.zeroWalletServerEndpoints.nonceProvider,
             {
                 zeroWalletAddress: this.zeroWallet.address,
-                gasTankName: this.gasTankName
+                chainId
             }
         );
+
+        if (response.data && response.data.nonce === 'Token expired') {
+            await this.refreshNonce();
+        }
+
+        response = await axios.post(
+            this.zeroWalletServerEndpoints.nonceProvider,
+            {
+                zeroWalletAddress: this.zeroWallet.address,
+                chainId
+            }
+        );
+
+        console.log(response.data);
 
         if (response.data && response.data.nonce !== 'Token expired') {
             this.store.set('nonce', response.data.nonce);
@@ -1023,7 +1044,7 @@ export class ZeroWalletSigner {
             zeroWalletAddress: this.zeroWallet.address,
             data,
             webHookAttributes,
-            gasTankName: this.gasTankName
+            chainId: tx.chainId?.toString()
         });
         const { safeTXBody, scwAddress } = response.data;
         const safeTXBodyWithNonce: BuildExecTransactionType = {
@@ -1036,12 +1057,13 @@ export class ZeroWalletSigner {
 
     async authorize(): Promise<boolean> {
         await this.initSignerPromise;
+        const chainId = this.getProvider().zeroWalletNetwork.chainId.toString();
 
         const response = await axios.post(
             this.zeroWalletServerEndpoints.authorizer,
             {
                 zeroWalletAddress: this.zeroWallet.address,
-                gasTankName: this.gasTankName
+                chainId
             }
         );
 
@@ -1069,12 +1091,17 @@ export class ZeroWalletSigner {
             this.zeroWalletServerEndpoints.scwDeployer,
             {
                 zeroWalletAddress: this.zeroWallet.address,
-                gasTankName: this.gasTankName,
+                chainId:
+                    this.getProvider().zeroWalletNetwork.chainId.toString(),
                 webHookAttributes
             }
         );
-
+        console.log('newScwAddress', newScwAddress);
         this.scwAddress = newScwAddress;
+        this.provider.emit('message', {
+            type: 'scwAddress',
+            data: newScwAddress
+        });
     }
 
     async refreshNonce(): Promise<void> {
@@ -1084,7 +1111,7 @@ export class ZeroWalletSigner {
             this.zeroWalletServerEndpoints.nonceRefresher,
             {
                 zeroWalletAddress: this.zeroWallet.address,
-                gasTankName: this.gasTankName
+                chainId: this.getProvider().zeroWalletNetwork.chainId.toString()
             }
         );
 
