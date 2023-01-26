@@ -1,37 +1,36 @@
-
-import useOwnerAndWebHookAttributes from "../../hooks/useOwnerAndWebHookAttributes";
-import useSWR from 'swr'
-import { GasTankType } from "../../types";
-import { Flex } from "@chakra-ui/react";
-import GasTank from "./GasTanks";
-import GasTankCreator from "./GasTankCreator";
-import { postFetcher } from "../../utils/fetchers";
+import { Flex } from '@chakra-ui/react';
+import useSWR from 'swr';
+import useOwnerAndWebHookAttributes from '../../hooks/useOwnerAndWebHookAttributes';
+import { GasTankType } from '../../types';
+import { postFetcher } from '../../utils/fetchers';
+import GasTankCreator from './GasTankCreator';
+import GasTank from './GasTanks';
 
 interface Props {
     projectId: string;
 }
 
-
 export default function GasTanks({ projectId }: Props) {
-    const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes()
+    const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes();
     const { data, error, mutate } = useSWR<GasTankType[]>(
         [
             `localhost:3000/api/dashboard/projects/${projectId}/gasTanks`,
-            ownerAndWebHookAttributes,
+            ownerAndWebHookAttributes
         ],
-        postFetcher);
+        postFetcher
+    );
 
     const onCreate = () => {
         mutate();
-    }
+    };
 
-
-    if (!ownerAndWebHookAttributes) return <div>loading...</div>
-    if (error) return <div>Failed to load</div>
-    if (!data) return <div>Loading...</div>
+    if (!ownerAndWebHookAttributes) return <div>loading...</div>;
+    if (error) return <div>Failed to load</div>;
+    if (!data) return <div>Loading...</div>;
 
     return (
-        <Flex direction="column"
+        <Flex
+            direction="column"
             alignItems="center"
             justifyContent="center"
             w="100%"
@@ -44,4 +43,3 @@ export default function GasTanks({ projectId }: Props) {
         </Flex>
     );
 }
-

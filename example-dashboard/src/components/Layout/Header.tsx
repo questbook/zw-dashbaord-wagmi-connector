@@ -1,7 +1,5 @@
-import { Button, Flex, Heading, Link, Text } from "@chakra-ui/react";
-import { Connector, useAccount, useConnect } from "wagmi";
-
-
+import { Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
+import { Connector, useAccount, useConnect } from 'wagmi';
 
 // header component with wagmi connect button
 export default function Header() {
@@ -15,7 +13,7 @@ export default function Header() {
                 w="100%"
                 h="100%"
                 p="1rem"
-                m='1rem'
+                m="1rem"
             >
                 <Flex>
                     <Heading as="h1" size="lg" color="Highlight" mr="1rem">
@@ -25,9 +23,11 @@ export default function Header() {
                 <Flex
                     gap={5}
                     alignItems="center"
-                    justifyContent={isConnected ? "flex-end" : "center"}
-                    >
-                    <Text pr={"5rem"} color="Highlight">{isConnected ? address : "Disconnected"}</Text>
+                    justifyContent={isConnected ? 'flex-end' : 'center'}
+                >
+                    <Text pr="5rem" color="Highlight">
+                        {isConnected ? address : 'Disconnected'}
+                    </Text>
                 </Flex>
             </Flex>
         </header>

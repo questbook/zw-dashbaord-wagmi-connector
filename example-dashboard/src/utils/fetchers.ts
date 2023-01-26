@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
 
-export const postFetcher = async (args: any[]) => {
+export async function postFetcher<T>(args: any[]): Promise<T | null> {
     const [input, requestData] = args;
-    console.log("init", input, requestData)
-    if (!requestData) return []
+    if (!requestData) return null;
     const { data } = await axios.post(input, requestData);
     if (data.error || data.errors) {
-        return null
+        return null;
     }
-    return data
-};
+
+    return data;
+}
