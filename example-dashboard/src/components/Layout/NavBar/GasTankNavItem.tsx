@@ -1,14 +1,18 @@
-import { Flex, Icon, Box } from "@chakra-ui/react";
-import { FiCompass } from "react-icons/fi";
+import { useContext } from 'react';
+import { FiCompass } from 'react-icons/fi';
+import { Box,Flex, Icon } from '@chakra-ui/react';
+import { GasTankType } from '../../../types';
+import { ProjectsContext } from '../../../../pages/_app';
 
-
-export interface GasTankProps {
-    chainId: string;
-}
-
-const GasTankNavItem = ({ chainId }: GasTankProps) => {
+const GasTankNavItem = (props: GasTankType) => {
+    const { chain_id: chainId } = props;
+    const { setSelectedEntity } = useContext(ProjectsContext)!
     return (
-        <Box onClick={(e) => { }} style={{ textDecoration: 'none' }} _focus={{ boxShadow: 'none' }}>
+        <Box
+            onClick={(e) => setSelectedEntity(props)}
+            style={{ textDecoration: 'none' }}
+            _focus={{ boxShadow: 'none' }}
+        >
             <Flex
                 align="center"
                 p="4"
@@ -19,13 +23,14 @@ const GasTankNavItem = ({ chainId }: GasTankProps) => {
                 cursor="pointer"
                 _hover={{
                     bg: 'cyan.400',
-                    color: 'white',
-                }}>
+                    color: 'white'
+                }}
+            >
                 <Icon
                     mr="4"
                     fontSize="16"
                     _groupHover={{
-                        color: 'white',
+                        color: 'white'
                     }}
                     as={FiCompass}
                 />
