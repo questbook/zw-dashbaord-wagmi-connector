@@ -1,12 +1,12 @@
 import { useContext } from 'react';
 import { FiCompass } from 'react-icons/fi';
-import { Box,Flex, Icon } from '@chakra-ui/react';
+import { Box, Flex, Icon } from '@chakra-ui/react';
 import { GasTankType } from '../../../types';
 import { ProjectsContext } from '../../../../pages/_app';
 
 const GasTankNavItem = (props: GasTankType) => {
     const { chain_id: chainId } = props;
-    const { setSelectedEntity } = useContext(ProjectsContext)!
+    const { setSelectedEntity } = useContext(ProjectsContext)!;
     return (
         <Box
             onClick={(e) => setSelectedEntity(props)}

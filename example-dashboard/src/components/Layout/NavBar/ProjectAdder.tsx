@@ -1,15 +1,16 @@
 import { FiPlusCircle } from 'react-icons/fi';
-import { Box,Flex, FlexProps, Icon } from '@chakra-ui/react';
+import { Box, Flex, FlexProps, Icon } from '@chakra-ui/react';
 import { ProjectsContext } from '../../../../pages/_app';
 import { useContext } from 'react';
 
-
-const ProjectNavItem = ({...rest }: FlexProps) => {
-    const { setSelectedEntity } = useContext(ProjectsContext)!
+const ProjectNavItem = ({ ...rest }: FlexProps) => {
+    const { setSelectedEntity } = useContext(ProjectsContext)!;
     return (
         <>
             <Box
-                onClick={() => {setSelectedEntity({ createNew: 'project' })}}
+                onClick={() => {
+                    setSelectedEntity({ createNew: 'project' });
+                }}
                 style={{ textDecoration: 'none' }}
                 _focus={{ boxShadow: 'none' }}
             >
@@ -41,7 +42,7 @@ const ProjectNavItem = ({...rest }: FlexProps) => {
                     align="center"
                     justify="center"
                     ml="auto"
-                 />
+                />
             </Box>
         </>
     );

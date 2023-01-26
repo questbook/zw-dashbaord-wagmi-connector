@@ -31,11 +31,11 @@ export default function Home() {
                 try {
                     try {
                         await signer.authorize();
-                    } catch { }
+                    } catch {}
 
                     await signer.deployScw();
                     setDoesScwExist(true);
-                } catch { }
+                } catch {}
             }
         };
 
@@ -47,21 +47,23 @@ export default function Home() {
             const projects = await getProjects(ownerAndWebHookAttributes);
             setProjects(projects);
         }
-    }
+    };
 
     useEffect(() => {
-        updateProjects()
-    }, [
-        doesScwExist,
-        ownerAndWebHookAttributes
-    ]);
+        updateProjects();
+    }, [doesScwExist, ownerAndWebHookAttributes]);
 
     const handleConnect = async (connector: Connector) => {
         connect({ connector: connector });
     };
 
     return (
-        <Flex justifyContent="center" alignItems="center" dir="column" minHeight={"60vh"}>
+        <Flex
+            justifyContent="center"
+            alignItems="center"
+            dir="column"
+            minHeight={'60vh'}
+        >
             <Head>
                 <title>Create Next App</title>
                 <meta name="description" content="Dashboard" />
@@ -81,7 +83,6 @@ export default function Home() {
                 </ButtonGroup>
             ) : (
                 <SmartViewer updateProjects={updateProjects} />
-
             )}
         </Flex>
     );

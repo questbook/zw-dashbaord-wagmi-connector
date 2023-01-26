@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box,Button, ButtonGroup, Flex, Input } from '@chakra-ui/react';
+import { Box, Button, ButtonGroup, Flex, Input } from '@chakra-ui/react';
 import axios from 'axios';
 import useOwnerAndWebHookAttributes from '../../../hooks/useOwnerAndWebHookAttributes';
 import { NewGasTank } from '../../../types';
@@ -31,16 +31,15 @@ export default function GasTankCreator({
             `${backendUrl}/api/dashboard/project/${projectId}/gasTank`,
             newGasTank
         );
-        if (onCreate)
-            onCreate();
+        if (onCreate) onCreate();
     };
 
     return (
-        <Flex 
+        <Flex
             direction="column"
             alignItems="center"
             justifyContent="center"
-            w='50%'
+            w="50%"
             gap={2}
         >
             <Input

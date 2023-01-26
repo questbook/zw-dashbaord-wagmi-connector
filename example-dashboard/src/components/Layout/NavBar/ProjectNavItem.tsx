@@ -7,16 +7,18 @@ import { useContext } from 'react';
 import GasTankAdder from './GasTankAdder';
 
 interface NavItemProps extends FlexProps {
-    project: IProject
+    project: IProject;
 }
 
 const ProjectNavItem = ({ project, ...rest }: NavItemProps) => {
     const { name: text, gasTanks } = project;
-    const { setSelectedEntity } = useContext(ProjectsContext)!
+    const { setSelectedEntity } = useContext(ProjectsContext)!;
     return (
         <>
             <Box
-                onClick={(e) => { setSelectedEntity(project) }}
+                onClick={(e) => {
+                    setSelectedEntity(project);
+                }}
                 style={{ textDecoration: 'none' }}
                 _focus={{ boxShadow: 'none' }}
             >
@@ -59,7 +61,7 @@ const ProjectNavItem = ({ project, ...rest }: NavItemProps) => {
                             {...gasTank}
                         />
                     ))}
-                    <GasTankAdder projectId={project.project_id} />
+                <GasTankAdder projectId={project.project_id} />
             </Flex>
         </>
     );

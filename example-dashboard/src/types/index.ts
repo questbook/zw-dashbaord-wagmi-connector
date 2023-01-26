@@ -43,7 +43,7 @@ export type IProject = ProjectApiType & {
 export type IGasTank = GasTankType;
 
 export interface CreateProjectEntity {
-    createNew: 'project'
+    createNew: 'project';
 }
 
 export interface CreateGasTankEntity {
@@ -51,4 +51,8 @@ export interface CreateGasTankEntity {
     projectId: string;
 }
 
-export type EntityType = IProject | IGasTank | CreateProjectEntity | CreateGasTankEntity;
+export type EntityType =
+    | IProject
+    | IGasTank
+    | CreateProjectEntity
+    | CreateGasTankEntity;

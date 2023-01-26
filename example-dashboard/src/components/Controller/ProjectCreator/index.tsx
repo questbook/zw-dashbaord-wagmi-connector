@@ -21,10 +21,7 @@ export default function ProjectCreator({ onCreate }: ProjectCreatorProps) {
             allowedOrigins,
             ...ownerAndWebHookAttributes!
         };
-        await axios.post(
-            `${backendUrl}/api/dashboard/project`,
-            newProject
-        );
+        await axios.post(`${backendUrl}/api/dashboard/project`, newProject);
         if (onCreate) onCreate();
     };
 
@@ -33,7 +30,7 @@ export default function ProjectCreator({ onCreate }: ProjectCreatorProps) {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            w='50%'
+            w="50%"
             gap={2}
         >
             <Input

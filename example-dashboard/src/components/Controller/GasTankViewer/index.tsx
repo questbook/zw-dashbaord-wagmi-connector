@@ -14,7 +14,6 @@ export default function GasTankViewer({
     whitelist,
     balance
 }: GasTankType) {
-
     const [fillAmount, setFillAmount] = React.useState<string>('');
 
     const handleFill = async () => {
@@ -27,19 +26,18 @@ export default function GasTankViewer({
         const signer = provider.getSigner();
         const contract = new Contract(contractAddress, abi, signer);
         const address = await signer.getAddress();
-        console.log(utils.parseUnits(fillAmount).toBigInt())
-        const tx = await contract.depositFor(parseInt(funding_key), { from: address, value: utils.parseUnits(fillAmount) });
+        console.log(utils.parseUnits(fillAmount).toBigInt());
+        const tx = await contract.depositFor(parseInt(funding_key), {
+            from: address,
+            value: utils.parseUnits(fillAmount)
+        });
         let receipt = await tx.wait(1);
-        console.log("receipt", receipt);
-    }
+        console.log('receipt', receipt);
+    };
 
     // show gas tank details
     return (
-        <Flex
-            direction='column'
-            alignItems='center'
-            justifyContent='center'
-        >
+        <Flex direction="column" alignItems="center" justifyContent="center">
             <Flex>
                 Gas Tank ID: {gas_tank_id}
                 <br />
@@ -55,11 +53,14 @@ export default function GasTankViewer({
                 <br />
                 Balance: {balance}
             </Flex>
-            <Input type='number' value={fillAmount} onChange={(e) => setFillAmount(e.target.value)} />
+            <Input
+                type="number"
+                value={fillAmount}
+                onChange={(e) => setFillAmount(e.target.value)}
+            />
             <ButtonGroup>
                 <Button onClick={() => handleFill()}>Fill</Button>
             </ButtonGroup>
         </Flex>
-
     );
 }

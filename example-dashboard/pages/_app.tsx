@@ -69,9 +69,9 @@ export const ProjectsContext = createContext<{
 
 export default function App({ Component, pageProps }: AppProps) {
     const [projects, setProjects] = useState<IProject[]>([]);
-    const [selectedEntity, setSelectedEntity] = useState<
-        EntityType | null
-    >(null);
+    const [selectedEntity, setSelectedEntity] = useState<EntityType | null>(
+        null
+    );
     const [doesScwExist, setDoesScwExist] = useState<boolean>(false);
 
     const projectsContextValue = {

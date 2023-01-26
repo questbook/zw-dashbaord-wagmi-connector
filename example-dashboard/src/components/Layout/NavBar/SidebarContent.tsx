@@ -17,7 +17,7 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-    const { isConnected } = useAccount()
+    const { isConnected } = useAccount();
     const { projects, doesScwExist } = useContext(ProjectsContext)!;
 
     return (
@@ -46,20 +46,23 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             </Flex>
             {doesScwExist ? (
                 <>
-                    {projects.sort((a, b) => a.name < b.name ? -1 : 1).map((project) => (
-                        <ProjectNavItem
-                            key={project.name}
-                            project={project}
-                        />
-                    ))}
+                    {projects
+                        .sort((a, b) => (a.name < b.name ? -1 : 1))
+                        .map((project) => (
+                            <ProjectNavItem
+                                key={project.name}
+                                project={project}
+                            />
+                        ))}
 
                     <ProjectAdder />
                 </>
-
+            ) : isConnected ? (
+                <Text>Deploying SCW...</Text>
             ) : (
-                isConnected ? (
-                    <Text>Deploying SCW...</Text>) : <Text textAlign="center" color="red.500">
-                    Please connect zero wallet </Text>
+                <Text textAlign="center" color="red.500">
+                    Please connect zero wallet{' '}
+                </Text>
             )}
         </Box>
     );
