@@ -266,7 +266,6 @@ export class ZeroWalletSigner {
     // @ts-ignore
     _address: string;
     scwAddress?: string;
-    gasTankName: string;
 
     zeroWalletServerEndpoints: ZeroWalletServerEndpoints;
     initSignerPromise: Promise<void>;
@@ -277,7 +276,6 @@ export class ZeroWalletSigner {
         store: IStoreable,
         zeroWalletServerDomain: string,
         zeroWalletProjectApiKey: string,
-        gasTankName: string,
         addressOrIndex?: string | number,
         recoveryConfig?: RecoveryConfig
     ) {
@@ -287,7 +285,6 @@ export class ZeroWalletSigner {
             );
         }
 
-        this.gasTankName = gasTankName;
         const baseUrlAuth = `${zeroWalletServerDomain}/api/auth/${zeroWalletProjectApiKey}`;
         const baseUrlTx = `${zeroWalletServerDomain}/api/tx/${zeroWalletProjectApiKey}`;
         this.zeroWalletServerEndpoints = {
@@ -1009,8 +1006,6 @@ export class ZeroWalletSigner {
             }
         );
 
-        console.log(response.data);
-
         if (response.data && response.data.nonce !== 'Token expired') {
             this.store.set('nonce', response.data.nonce);
             return response.data.nonce;
@@ -1070,10 +1065,6 @@ export class ZeroWalletSigner {
         return !!response.data?.authorize;
     }
 
-    setGasTankName(gasTankName: string): void {
-        this.gasTankName = gasTankName;
-    }
-
     async deployScw(): Promise<void> {
         await this.initSignerPromise;
 
@@ -1096,7 +1087,6 @@ export class ZeroWalletSigner {
                 webHookAttributes
             }
         );
-        console.log('newScwAddress', newScwAddress);
         this.scwAddress = newScwAddress;
         this.provider.emit('message', {
             type: 'scwAddress',

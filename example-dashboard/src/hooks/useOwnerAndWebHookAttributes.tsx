@@ -26,9 +26,5 @@ export default function useOwnerAndWebHookAttributes() {
         getWebHookAttributes();
     }, [signer, doesScwExist]);
 
-    useEffect(() => {
-        console.log(webHookAttributes);
-    }, [webHookAttributes]);
-
     return webHookAttributes;
 }

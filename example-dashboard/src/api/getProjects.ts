@@ -28,6 +28,5 @@ export async function getProjects(
             return { ...project, gasTanks };
         })
     );
-    console.log(projectWithGasTanks);
     return projectWithGasTanks;
 }

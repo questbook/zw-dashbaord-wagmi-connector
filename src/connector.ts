@@ -39,7 +39,6 @@ export class ZeroWalletConnector extends Connector<
                     this.store,
                     config.options.zeroWalletServerDomain,
                     config.options.zeroWalletProjectApiKey,
-                    config.options.gasTankName,
                     config.options.recovery
                 ));
 

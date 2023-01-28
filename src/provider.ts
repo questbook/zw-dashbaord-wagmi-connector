@@ -28,7 +28,6 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
     zeroWalletNetwork: ethers.providers.Network;
     zeroWalletServerDomain: string;
     zeroWalletProjectApiKey: string;
-    gasTankName: string;
     recovery: RecoveryConfig | undefined;
 
     constructor(
@@ -37,7 +36,6 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
         store: IStoreable,
         zeroWalletServerDomain: string,
         zeroWalletProjectApiKey: string,
-        gasTankName: string,
         recoveryConfig?: RecoveryConfig
     ) {
         super(jsonRpcProviderUrl, network);
@@ -45,7 +43,6 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
         this.zeroWalletProjectApiKey = zeroWalletProjectApiKey;
         this.store = store;
         this.zeroWalletNetwork = network;
-        this.gasTankName = gasTankName;
         this.recovery = recoveryConfig;
     }
 
@@ -60,7 +57,6 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
             this.store,
             this.zeroWalletServerDomain,
             this.zeroWalletProjectApiKey,
-            this.gasTankName,
             undefined,
             isInitRecovery !== false ? this.recovery : undefined
         );

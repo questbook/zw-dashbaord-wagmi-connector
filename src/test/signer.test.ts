@@ -39,14 +39,12 @@ describe('Test ZeroWalletSigner', () => {
     };
     const storage = StorageFactory.create('browser');
     const jsonRpcProviderUrl = 'https://eth-goerli.g.alchemy.com/v2/0x123';
-    const gasTankName = 'gasTankName';
     const provider = new ZeroWalletProvider(
         jsonRpcProviderUrl,
         network,
         storage,
         zeroWalletServerDomain,
         zeroWalletProjectApiKey,
-        gasTankName
     );
 
     const mockAbi = [

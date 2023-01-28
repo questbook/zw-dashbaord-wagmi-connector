@@ -22,7 +22,6 @@ export type ZeroWalletConnectorOptions = {
     store: string;
     zeroWalletServerDomain: string;
     zeroWalletProjectApiKey: string;
-    gasTankName: string;
     recovery?: RecoveryConfig;
 };
 

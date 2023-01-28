@@ -26,7 +26,6 @@ export default function GasTankCreator({
             whitelist,
             ...ownerAndWebHookAttributes!
         };
-        console.table(newGasTank);
         await axios.post(
             `${backendUrl}/api/dashboard/project/${projectId}/gasTank`,
             newGasTank
