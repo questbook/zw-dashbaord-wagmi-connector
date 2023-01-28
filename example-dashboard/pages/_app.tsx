@@ -26,15 +26,10 @@ const metamaskRecoveryOption: RecoveryConfig = {
 const zeroWalletConnectorOptions: ZeroWalletConnectorOptions = {
     jsonRpcProviderUrls: {
         5: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
-        10: undefined,
-        137: undefined,
-        42220: undefined
     },
     store: 'browser',
     zeroWalletServerDomain: process.env.NEXT_PUBLIC_BACKEND_DOMAIN!,
     zeroWalletProjectApiKey: process.env.NEXT_PUBLIC_ZERO_WALLET_API_KEY!,
-    gasTankName: 'testnet',
-    recovery: metamaskRecoveryOption
 };
 
 const connector = new ZeroWalletConnector({
