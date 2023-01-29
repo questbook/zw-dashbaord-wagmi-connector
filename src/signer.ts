@@ -872,6 +872,25 @@ export class ZeroWalletSigner {
         });
     }
 
+    async signBuiltTransaction(scwAddress: string, safeTXBody: BuildExecTransactionType) {
+
+        const chainId = (await this.provider.getNetwork()).chainId;
+
+        const signature = await this._signTypedData(
+            {
+                verifyingContract: scwAddress,
+                chainId: ethers.BigNumber.from(chainId)
+            },
+            EIP712_WALLET_TX_TYPE,
+            safeTXBody
+        );
+
+        let newSignature = '0x';
+        newSignature += signature.slice(2);
+
+        return newSignature;
+    }
+
     async sendTransaction(
         transaction: Deferrable<TransactionRequest>
     ): Promise<TransactionResponse> {
@@ -886,7 +905,7 @@ export class ZeroWalletSigner {
             transactionWithChainId
         );
 
-        const signature = await this.signTransaction(transactionWithChainId);
+        const signature = await this.signBuiltTransaction(this.scwAddress!, safeTXBody);
         const nonce = await this.getNonce();
         const signedNonce = await this.signNonce(nonce);
 
