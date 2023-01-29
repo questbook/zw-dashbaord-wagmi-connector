@@ -6,6 +6,7 @@ import useOwnerAndWebHookAttributes from '../../../hooks/useOwnerAndWebHookAttri
 import axios from 'axios';
 import { backendUrl } from '../../../api/constants';
 import { AddIcon } from '@chakra-ui/icons';
+import MultiInputUpdater from '../../UI/MultiInputUpdater';
 
 type Props = ProjectApiType & {
     onUpdate?: () => void;
@@ -29,17 +30,6 @@ export default function ProjectViewer({
         setNameUpdated(newName.trim())
     }
 
-    const handleRemove = (index: number) => {
-        const newAllowOriginsUpdated = allowOriginsUpdated.filter((_, curIndex) => curIndex !== index);
-        setAllowOriginsUpdated(newAllowOriginsUpdated)
-    }
-
-    const handleChange = (index: number, newVal: string) => {
-        const newAllowOriginsUpdated = [...allowOriginsUpdated];
-        newAllowOriginsUpdated[index] = newVal.trim();
-        setAllowOriginsUpdated(newAllowOriginsUpdated)
-    }
-
     const handleSubmit = async () => {
         if (!ownerAndWebHookAttributes) return;
         await axios.post(`${backendUrl}/api/dashboard/project/${project_id}`, {
@@ -50,10 +40,6 @@ export default function ProjectViewer({
         if (onUpdate)
             onUpdate()
     };
-
-    const handleAddOrigin = () => {
-        setAllowOriginsUpdated([...allowOriginsUpdated, ''])
-    }
 
     return (
         <Flex
@@ -81,33 +67,18 @@ export default function ProjectViewer({
             <br />
             Allowed Origins: {allowed_origins.join(', ')}
             <br />
-            <Box>
-                {
-                    allowed_origins.map((origin, index) => {
-                        return (
-                            <InputUpdater
-                                handleChange={(newVal: string) => handleChange(index, newVal)}
-                                handleRemove={() => handleRemove(index)}
-                                value={origin}
-                                key={index}
-                            />
-                        )
-                    })
-                }
-            </Box>
 
-            <IconButton
-                onClick={handleAddOrigin}
-                icon={<AddIcon />}
-                aria-label={''}
-                m={10}
-            >
-            </IconButton>
+            <MultiInputUpdater
+                values={allowOriginsUpdated}
+                onChange={(newValues: string[]) => setAllowOriginsUpdated(newValues)}
+                canBeEmptyList={true}
+                canAdd={true}
+            />
 
             <Box>
                 <Button
-                    disabled={nameUpdated === name && allowOriginsUpdated.join(',') === allowed_origins.join(',')}
                     onClick={() => handleSubmit()}
+                    isDisabled={nameUpdated === name && allowOriginsUpdated.join(',') === allowed_origins.join(',')}
                 >
                     Submit
                 </Button>
