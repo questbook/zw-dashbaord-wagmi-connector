@@ -19,7 +19,7 @@ export default function SmartViewer({ updateProjects }: Props) {
     if (!doesScwExist || !selectedEntity) return null;
 
     if ('gasTanks' in selectedEntity) {
-        return <ProjectViewer {...selectedEntity} />;
+        return <ProjectViewer onUpdate={updateProjects} {...selectedEntity} />;
     }
 
     if ('createNew' in selectedEntity) {
