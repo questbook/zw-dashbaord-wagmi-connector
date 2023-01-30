@@ -37,6 +37,7 @@ export default function InputUpdater({ handleChange, handleRemove, value, ...res
         <Flex gap={5} {...rest}>
             <Editable
                 defaultValue={value}
+                value={value}
                 onChange={(newVal) => handleChange(newVal)}
                 textAlign='center'
                 isPreviewFocusable={false}
