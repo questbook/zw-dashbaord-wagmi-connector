@@ -27,9 +27,7 @@ export class ZeroWalletConnector extends Connector<
     }) {
         super(config);
 
-        const isMobile = detectIsMobile();
-
-        this.store = StorageFactory.create(isMobile ? 'mobile' : config.options.store);
+        this.store = StorageFactory.create('browser');
         this.onAccountsChanged = this.onAccountsChanged.bind(this);
         this.onChainChanged = this.onChainChanged.bind(this);
         this.onDisconnect = this.onDisconnect.bind(this);
