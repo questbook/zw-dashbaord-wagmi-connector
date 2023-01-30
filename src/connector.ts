@@ -3,6 +3,7 @@ import { Chain, Connector, ConnectorData } from 'wagmi';
 import { SupportedChainId } from './constants/chains';
 import { IStoreable } from './store/IStoreable';
 import { StorageFactory } from './store/storageFactory';
+import detectIsMobile from './utils/detectIsMobile';
 import { normalizeChainId } from './utils/normalizeChainId';
 import { ZeroWalletProvider } from './provider';
 import { ZeroWalletSigner } from './signer';
@@ -26,7 +27,9 @@ export class ZeroWalletConnector extends Connector<
     }) {
         super(config);
 
-        this.store = StorageFactory.create(config.options.store);
+        const isMobile = detectIsMobile();
+
+        this.store = StorageFactory.create(isMobile ? 'mobile' : config.options.store);
         this.onAccountsChanged = this.onAccountsChanged.bind(this);
         this.onChainChanged = this.onChainChanged.bind(this);
         this.onDisconnect = this.onDisconnect.bind(this);
