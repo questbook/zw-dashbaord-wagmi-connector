@@ -4,14 +4,19 @@ import axios from 'axios';
 import useOwnerAndWebHookAttributes from '../../../hooks/useOwnerAndWebHookAttributes';
 import { NewProject } from '../../../types';
 import { backendUrl } from '../../../api/constants';
+import InputUpdater from '../../UI/InputUpdater';
+import MultiInputUpdater from '../../UI/MultiInputUpdater';
 
 interface ProjectCreatorProps {
     onCreate?: () => void;
 }
 
+const ORIGIN_PLACEHOLDER = 'https://example.com';
+const NAME_PLACEHOLDER = 'MY PROJECT';
+
 export default function ProjectCreator({ onCreate }: ProjectCreatorProps) {
-    const [name, setName] = React.useState<string>('');
-    const [allowedOrigins, setAllowedOrigins] = React.useState<string[]>([]);
+    const [name, setName] = React.useState<string>(NAME_PLACEHOLDER);
+    const [allowedOrigins, setAllowedOrigins] = React.useState<string[]>([ORIGIN_PLACEHOLDER]);
     const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes();
 
     const handleSubmit = async () => {
@@ -30,18 +35,20 @@ export default function ProjectCreator({ onCreate }: ProjectCreatorProps) {
             direction="column"
             alignItems="center"
             justifyContent="center"
-            w="50%"
             gap={2}
         >
-            <Input
-                placeholder="Project Name"
+            Project name
+            <InputUpdater
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                handleChange={(newName) => setName(newName)}
             />
-            <Input
-                placeholder="Allowed Origins"
-                value={allowedOrigins}
-                onChange={(e) => setAllowedOrigins(e.target.value.split(','))}
+
+            Allowed origins
+            <MultiInputUpdater 
+                values={allowedOrigins}
+                onChange={(newValues: string[]) => setAllowedOrigins(newValues)}
+                canAdd={true}
+                defaultNewValue={ORIGIN_PLACEHOLDER}
             />
             <ButtonGroup>
                 <Button onClick={handleSubmit}>Create</Button>
