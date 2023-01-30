@@ -1,14 +1,17 @@
 import React from 'react';
-import { Box, Button, ButtonGroup, Flex, Input } from '@chakra-ui/react';
+import { Box, Button, ButtonGroup, Flex, Input, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import useOwnerAndWebHookAttributes from '../../../hooks/useOwnerAndWebHookAttributes';
 import { NewGasTank } from '../../../types';
 import { backendUrl } from '../../../api/constants';
+import MultiInputUpdater from '../../UI/MultiInputUpdater';
 
 interface GasTankCreatorProps {
     projectId: string;
     onCreate?: () => void;
 }
+
+const ADDRESS_PLACEHOLDER = '0x1234...';
 
 export default function GasTankCreator({
     onCreate,
@@ -16,7 +19,7 @@ export default function GasTankCreator({
 }: GasTankCreatorProps) {
     const [chainId, setChainId] = React.useState<string>('');
     const [providerURL, setProviderUrl] = React.useState<string>('');
-    const [whitelist, setWhitelist] = React.useState<string[]>([]);
+    const [whitelist, setWhitelist] = React.useState<string[]>([ADDRESS_PLACEHOLDER]);
     const ownerAndWebHookAttributes = useOwnerAndWebHookAttributes();
 
     const handleSubmit = async () => {
@@ -36,26 +39,30 @@ export default function GasTankCreator({
     return (
         <Flex
             direction="column"
+            // display={{ base: 'block', md: 'flex'}}
+            // display={'flex'}
             alignItems="center"
             justifyContent="center"
             w="50%"
             gap={2}
         >
+
+            <Text as="b">Chain ID</Text>
             <Input
                 placeholder="Chain ID"
                 value={chainId}
                 onChange={(e) => setChainId(e.target.value)}
+                w='sm'
             />
-            <Input
-                placeholder="Provider URL"
-                value={providerURL}
-                onChange={(e) => setProviderUrl(e.target.value)}
-            />
-            <Input
-                placeholder="Whitelist"
-                value={whitelist}
-                onChange={(e) => setWhitelist(e.target.value.split(','))}
-            />
+
+                <Text as="b">Whitelist</Text>
+                <MultiInputUpdater
+                    values={whitelist}
+                    onChange={(newValues: string[]) => setWhitelist(newValues)}
+                    canAdd={true}
+                    defaultNewValue={ADDRESS_PLACEHOLDER}
+                />
+            
             <ButtonGroup>
                 <Button onClick={handleSubmit}>Create</Button>
             </ButtonGroup>

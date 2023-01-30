@@ -44,8 +44,8 @@ export default function InputUpdater({ handleChange, handleRemove, value, ...res
                 display='flex'
                 alignItems='center'
             >
-                <EditablePreview w='sm' />
-                <Input as={EditableInput} w='sm' />
+                <EditablePreview w='md' />
+                <Input as={EditableInput} w='md' />
                 <EditableControls handleRemove={handleRemove} />
             </Editable>
         </Flex>
