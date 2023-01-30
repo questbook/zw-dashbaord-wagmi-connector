@@ -7,6 +7,7 @@ interface Props {
     onChange: (newValues: string[]) => void;
     canBeEmptyList?: boolean;
     canAdd?: boolean;
+    defaultNewValue?: string;
 }
 
 export default function MultiInputUpdater({
@@ -14,11 +15,12 @@ export default function MultiInputUpdater({
     onChange,
     canBeEmptyList,
     canAdd,
+    defaultNewValue,
 }: Props) {
 
     const handleRemove = (index: number) => {
-        const newAllowOriginsUpdated = values.filter((_, curIndex) => curIndex !== index);
-        onChange(newAllowOriginsUpdated)
+        const newValues = values.filter((_, curIndex) => curIndex !== index);
+        onChange(newValues)
     }
 
     const handleSingleChange = (index: number, newVal: string) => {
@@ -28,7 +30,7 @@ export default function MultiInputUpdater({
     }
 
     const handleAddElement = () => {
-        onChange([...values, ''])
+        onChange([...values, defaultNewValue || ''])
     }
 
     return (
