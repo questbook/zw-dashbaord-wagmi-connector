@@ -3,7 +3,6 @@ import { Chain, Connector, ConnectorData } from 'wagmi';
 import { SupportedChainId } from './constants/chains';
 import { IStoreable } from './store/IStoreable';
 import { StorageFactory } from './store/storageFactory';
-import detectIsMobile from './utils/detectIsMobile';
 import { normalizeChainId } from './utils/normalizeChainId';
 import { ZeroWalletProvider } from './provider';
 import { ZeroWalletSigner } from './signer';
