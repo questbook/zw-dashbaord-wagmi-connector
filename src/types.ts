@@ -1,4 +1,3 @@
-import { SupportedChainId } from './constants/chains';
 import { MetamaskRecoveryMechanismOption } from './recovery/MetamaskRecovery';
 import { IStoreable } from './store/IStoreable';
 import type { GoogleRecoveryMechanismOptions } from './recovery';
@@ -18,15 +17,10 @@ export type RecoveryConfig =
     | MetamaskRecoveryConnectorOptions;
 
 export type ZeroWalletConnectorOptions = {
-    jsonRpcProviderUrls: JsonRpcProviderUrls;
     store: string;
     zeroWalletServerDomain: string;
     zeroWalletProjectApiKey: string;
     recovery?: RecoveryConfig;
-};
-
-export type JsonRpcProviderUrls = {
-    [key in SupportedChainId]?: string;
 };
 
 export type NameToClassValue<T extends IStoreable> = { [key: string]: T };

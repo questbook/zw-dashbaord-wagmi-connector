@@ -34,7 +34,6 @@ export class ZeroWalletConnector extends Connector<
         config.chains?.forEach((chain) => {
             if (chain) {
                 const provider = (this.provider = new ZeroWalletProvider(
-                    config.options.jsonRpcProviderUrls[chain.id],
                     { chainId: chain.id, name: chain.name },
                     this.store,
                     config.options.zeroWalletServerDomain,

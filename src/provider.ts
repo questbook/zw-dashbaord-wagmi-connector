@@ -31,14 +31,13 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
     recovery: RecoveryConfig | undefined;
 
     constructor(
-        jsonRpcProviderUrl: string,
         network: ethers.providers.Network,
         store: IStoreable,
         zeroWalletServerDomain: string,
         zeroWalletProjectApiKey: string,
         recoveryConfig?: RecoveryConfig
     ) {
-        super(jsonRpcProviderUrl, network);
+        super("", network);
         this.zeroWalletServerDomain = zeroWalletServerDomain;
         this.zeroWalletProjectApiKey = zeroWalletProjectApiKey;
         this.store = store;

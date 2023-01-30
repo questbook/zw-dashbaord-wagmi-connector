@@ -24,9 +24,6 @@ const metamaskRecoveryOption: RecoveryConfig = {
 };
 
 const zeroWalletConnectorOptions: ZeroWalletConnectorOptions = {
-    jsonRpcProviderUrls: {
-        5: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
-    },
     store: 'browser',
     zeroWalletServerDomain: process.env.NEXT_PUBLIC_BACKEND_DOMAIN!,
     zeroWalletProjectApiKey: process.env.NEXT_PUBLIC_ZERO_WALLET_API_KEY!,
