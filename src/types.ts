@@ -17,7 +17,6 @@ export type RecoveryConfig =
     | MetamaskRecoveryConnectorOptions;
 
 export type ZeroWalletConnectorOptions = {
-    store: string;
     zeroWalletServerDomain: string;
     zeroWalletProjectApiKey: string;
     recovery?: RecoveryConfig;
