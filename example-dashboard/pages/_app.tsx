@@ -24,7 +24,6 @@ const metamaskRecoveryOption: RecoveryConfig = {
 };
 
 const zeroWalletConnectorOptions: ZeroWalletConnectorOptions = {
-    store: 'browser',
     zeroWalletServerDomain: process.env.NEXT_PUBLIC_BACKEND_DOMAIN!,
     zeroWalletProjectApiKey: process.env.NEXT_PUBLIC_ZERO_WALLET_API_KEY!,
 };
