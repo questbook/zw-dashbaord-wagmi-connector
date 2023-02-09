@@ -16,6 +16,7 @@ npm-debug.log*
 
 .env
 .DS_Store
-
+package
+*.tgz
 
 lib
