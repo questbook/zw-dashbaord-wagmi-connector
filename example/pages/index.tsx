@@ -13,21 +13,27 @@ import {
     useAccount,
     useConnect,
     useContract,
+    useNetwork,
     useSigner
 } from 'wagmi';
 import { ZeroWalletSigner } from 'zero-wallet-wagmi-connector';
-import { contractAbi, contractAddress } from '../src/constants/contract';
+import { addressByChainId, contractAbi, DEFAULT_CHAIN_ID } from '../src/constants/contract';
+import { ScwContext } from './_app';
 
 export default function Home() {
+    // context
+    const { doesScwExist, setDoesScwExist } = useContext(ScwContext)!
+
     // state
     const [newNumber, setNewNumber] = useState<string>('');
     const [contractNumber, setContractNumber] = useState<number | null>(null);
 
     // wagmi hooks
+    const { chain } = useNetwork()
     const { address } = useAccount();
     const { data: signer } = useSigner<ZeroWalletSigner>();
     const { connect, connectors } = useConnect();
-    // console.log(contractAddress, contractAbi, signer)
+    const contractAddress = addressByChainId[chain?.id || DEFAULT_CHAIN_ID]
     const contract = useContract({
         address: contractAddress,
         abi: contractAbi,
@@ -42,14 +48,6 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        const func = async () => {
-            await authorizeAndDeploy();
-            await updateContractNumber();
-        }
-        func()
-    }, [signer, contract]);
-
-    useEffect(() => {
         console.log("scwAddress", signer?.scwAddress);
     }, [signer?.scwAddress])
 
@@ -57,29 +55,48 @@ export default function Home() {
         connect({ connector: connector });
     };
 
-    const authorizeAndDeploy = async () => {
-        if (signer) {
-            try {
-                await signer.authorize();
-            } catch { }
+    useEffect(() => {
+        const func = async () => {
+            if (signer && !doesScwExist) {
+                try {
+                    try {
+                        await signer.authorize()
+                    } catch { }
 
-            try {
-                await signer.deployScw();
-            } catch { }
+                    await signer.deployScw()
+                    setDoesScwExist(true)
+                } catch { }
+            }
         }
-    }
 
-    const updateContractNumber = async () => {
+        func()
+    }, [signer, doesScwExist, setDoesScwExist])
+
+    useEffect(() => {
+        console.log('chain changed', chain)
+    }, [chain])
+
+    const getContractNumber = async () => {
         if (!contract || !signer) return;
-        const newContractNumber = await contract.value();
-        setContractNumber(parseInt(newContractNumber));
+        try {
+            console.log(contract.functions)
+            const newContractNumber = await contract.value();
+            console.log(newContractNumber)
+            setContractNumber(parseInt(newContractNumber));
+        }
+        catch{}
     };
+
+    useEffect(() => {
+        if (doesScwExist)
+            getContractNumber()
+    }, [doesScwExist])
 
     const handleSetNumber = async () => {
         if (!contract) return;
         const tx = await contract.set(parseInt(newNumber));
         await tx?.wait();
-        await updateContractNumber();
+        await getContractNumber();
     };
 
     return (

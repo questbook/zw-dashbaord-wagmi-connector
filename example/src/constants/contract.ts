@@ -1,4 +1,10 @@
-const contractAddress = '0xA119f2120E82380DC89832B8F3740fDC47b0444f';
+
+const DEFAULT_CHAIN_ID = 5;
+
+const addressByChainId: { [key: number]: string } = {
+    5: '0xA119f2120E82380DC89832B8F3740fDC47b0444f',
+    10: '0x05c43C08FC9444AD612723ab43EF92c6c66ab892'
+}
 
 const contractAbi = [
     {
@@ -29,4 +35,4 @@ const contractAbi = [
     }
 ];
 
-export { contractAddress, contractAbi };
+export { addressByChainId, contractAbi, DEFAULT_CHAIN_ID };

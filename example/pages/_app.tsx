@@ -1,6 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { getDefaultProvider } from 'ethers';
 import type { AppProps } from 'next/app';
+import { createContext, useState } from 'react';
 import { chain, createClient, WagmiConfig } from 'wagmi';
 import {
     ZeroWalletConnector,
@@ -13,11 +14,11 @@ const zeroWalletConnectorOptions: ZeroWalletConnectorOptions = {
 }
 
 const connector = new ZeroWalletConnector({
-    chains: [chain.goerli],
+    chains: [chain.goerli, chain.optimism],
     options: zeroWalletConnectorOptions
 });
 
-const provider = getDefaultProvider(chain.goerli.id);
+const provider = getDefaultProvider();
 
 const client = createClient({
     autoConnect: false,
@@ -33,12 +34,22 @@ const client = createClient({
     ]
 });
 
+export const ScwContext = createContext<{
+    doesScwExist: boolean
+    setDoesScwExist: (newState: boolean) => void
+} | null>(null)
+
 export default function App({ Component, pageProps }: AppProps) {
+    const [doesScwExist, setDoesScwExist] = useState<boolean>(false)
+
+    const projectsContextValue = { doesScwExist, setDoesScwExist }
 
     return (
         <WagmiConfig client={client}>
             <ChakraProvider>
+                <ScwContext.Provider value={projectsContextValue}>
                     <Component {...pageProps} />
+                </ScwContext.Provider>
             </ChakraProvider>
         </WagmiConfig>
     );
