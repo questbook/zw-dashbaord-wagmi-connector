@@ -1,5 +1,4 @@
 
-const DEFAULT_CHAIN_ID = 5;
 
 const addressByChainId: { [key: number]: string } = {
     5: '0xA119f2120E82380DC89832B8F3740fDC47b0444f',
@@ -35,4 +34,4 @@ const contractAbi = [
     }
 ];
 
-export { addressByChainId, contractAbi, DEFAULT_CHAIN_ID };
+export { addressByChainId, contractAbi };
