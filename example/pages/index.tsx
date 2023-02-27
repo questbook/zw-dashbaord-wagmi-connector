@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import {
     Box,
     Button,
@@ -14,11 +14,17 @@ import {
     useConnect,
     useContract,
     useNetwork,
-    useSigner
+    useSigner,
+    useSwitchNetwork
 } from 'wagmi';
 import { ZeroWalletSigner } from 'zero-wallet-wagmi-connector';
-import { addressByChainId, contractAbi, DEFAULT_CHAIN_ID } from '../src/constants/contract';
+import { addressByChainId, contractAbi } from '../src/constants/contract';
+
+import { chain as wagmiChain } from 'wagmi'
+
 import { ScwContext } from './_app';
+import Dropdown from '../src/components/Dropdown';
+import { CHAIN_NAMES, DEFAULT_CHAIN, SupportedChainIds } from '../src/constants/chains';
 
 export default function Home() {
     // context
@@ -29,11 +35,12 @@ export default function Home() {
     const [contractNumber, setContractNumber] = useState<number | null>(null);
 
     // wagmi hooks
-    const { chain } = useNetwork()
+    const { isLoading, error, switchNetworkAsync } = useSwitchNetwork()
+    const { chain, chains } = useNetwork()
     const { address } = useAccount();
     const { data: signer } = useSigner<ZeroWalletSigner>();
     const { connect, connectors } = useConnect();
-    const contractAddress = addressByChainId[chain?.id || DEFAULT_CHAIN_ID]
+    const contractAddress = addressByChainId[chain?.id || DEFAULT_CHAIN]
     const contract = useContract({
         address: contractAddress,
         abi: contractAbi,
@@ -49,11 +56,16 @@ export default function Home() {
 
     useEffect(() => {
         console.log("scwAddress", signer?.scwAddress);
+        // setDoesScwExist(!!signer?.scwAddress)
     }, [signer?.scwAddress])
 
     const handleConnect = async (connector: Connector) => {
         connect({ connector: connector });
     };
+
+    useEffect(() => {
+        console.log('getScwAddress', signer?.getScwAddress())
+    }, [signer])
 
     useEffect(() => {
         const func = async () => {
@@ -79,12 +91,10 @@ export default function Home() {
     const getContractNumber = async () => {
         if (!contract || !signer) return;
         try {
-            console.log(contract.functions)
             const newContractNumber = await contract.value();
-            console.log(newContractNumber)
             setContractNumber(parseInt(newContractNumber));
         }
-        catch{}
+        catch { }
     };
 
     useEffect(() => {
@@ -103,7 +113,7 @@ export default function Home() {
         <Flex
             justifyContent="center"
             alignItems="center"
-            dir="c"
+            direction='column'
             h="100vh"
             w="100vw"
         >
@@ -117,7 +127,7 @@ export default function Home() {
             </Head>
 
             {!signer ? (
-                <ButtonGroup>
+                <ButtonGroup m={20}>
                     {connectors.map((connector, index) => (
                         <Button
                             key={index}
@@ -128,27 +138,53 @@ export default function Home() {
                     ))}
                 </ButtonGroup>
             ) : (
-                <Flex alignItems="center" direction="column" gap={5}>
-                    <Box>
-                        Storage value:{' '}
-                        {contractNumber ? contractNumber : 'loading...'}
-                    </Box>
-                    <Box>
-                        Your SCW address: {signer.scwAddress}
-                        <br />
-                        Your zero wallet address: {address}
-                    </Box>
-                    <Flex gap={2}>
-                        <Input
-                            type="number"
-                            value={newNumber}
-                            onChange={(e) => setNewNumber(e.target.value)}
-                        />
-                        <Button onClick={handleSetNumber} padding="5">
-                            Set Number
-                        </Button>
+
+                <Fragment>
+                    <Dropdown
+                        handleChange={async (newChain) => {
+                            // console.log(switchNetwork, error, isLoading)
+                            // console.log(chain)
+                            console.log(newChain)
+                            if (switchNetworkAsync)
+                                await switchNetworkAsync(newChain.value)
+                            else console.log('switchNetwork does not exist')
+                            console.log('done')
+                        }}
+
+                        listItems={[wagmiChain.goerli, wagmiChain.optimism].map(chain => ({
+                            value: chain.id,
+                            label: chain.name
+                        }))}
+
+                        selectedItem={{
+                            value: chain?.id ?? DEFAULT_CHAIN,
+                            label: CHAIN_NAMES[(chain?.id as SupportedChainIds) ?? DEFAULT_CHAIN]
+                        }}
+                    />
+
+                    <Flex m={20} alignItems="center" direction="column" gap={5}>
+                        <Box>
+                            Storage value:{' '}
+                            {contractNumber ? contractNumber : 'loading...'}
+                        </Box>
+                        <Box>
+                            Your SCW address: {signer.scwAddress}
+                            <br />
+                            Your zero wallet address: {address}
+                        </Box>
+                        <Flex gap={2}>
+                            <Input
+                                type="number"
+                                value={newNumber}
+                                onChange={(e) => setNewNumber(e.target.value)}
+                            />
+                            <Button onClick={handleSetNumber} padding="5">
+                                Set Number
+                            </Button>
+                        </Flex>
                     </Flex>
-                </Flex>
+
+                </Fragment>
             )}
         </Flex>
     );
