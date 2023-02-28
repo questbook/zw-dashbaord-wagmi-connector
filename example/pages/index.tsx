@@ -25,6 +25,8 @@ import { chain as wagmiChain } from 'wagmi'
 import { ScwContext } from './_app';
 import Dropdown from '../src/components/Dropdown';
 import { CHAIN_NAMES, DEFAULT_CHAIN, SupportedChainIds } from '../src/constants/chains';
+import { SupportedChainId } from '../../lib/esm/constants/chains';
+
 
 export default function Home() {
     // context
@@ -55,21 +57,12 @@ export default function Home() {
     }, []);
 
     useEffect(() => {
-        console.log("scwAddress", signer?.scwAddress);
-        // setDoesScwExist(!!signer?.scwAddress)
-    }, [signer?.scwAddress])
-
-    const handleConnect = async (connector: Connector) => {
-        connect({ connector: connector });
-    };
-
-    useEffect(() => {
-        console.log('getScwAddress', signer?.getScwAddress())
-    }, [signer])
+        getContractNumber()
+    }, [contract, signer])
 
     useEffect(() => {
         const func = async () => {
-            if (signer && !doesScwExist) {
+            if (signer) {
                 try {
                     try {
                         await signer.authorize()
@@ -84,23 +77,19 @@ export default function Home() {
         func()
     }, [signer, doesScwExist, setDoesScwExist])
 
-    useEffect(() => {
-        console.log('chain changed', chain)
-    }, [chain])
+    const handleConnect = async (connector: Connector) => {
+        connect({ connector: connector });
+    };
 
     const getContractNumber = async () => {
         if (!contract || !signer) return;
+        setContractNumber(null)
         try {
             const newContractNumber = await contract.value();
             setContractNumber(parseInt(newContractNumber));
         }
         catch { }
     };
-
-    useEffect(() => {
-        if (doesScwExist)
-            getContractNumber()
-    }, [doesScwExist])
 
     const handleSetNumber = async () => {
         if (!contract) return;
