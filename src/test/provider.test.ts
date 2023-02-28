@@ -5,7 +5,6 @@
 import { describe, test } from '@jest/globals';
 import axios from 'axios';
 import { ethers } from 'ethers';
-import { SupportedChainId } from '../constants/chains';
 import { ZeroWalletProvider } from '../provider';
 import { ZeroWalletSigner } from '../signer';
 import { StorageFactory } from '../store/storageFactory';
@@ -103,17 +102,17 @@ describe('Test ZeroWalletProvider methods', () => {
         expect(network.name).toBe('Goerli');
     });
 
-    test('switch network to Polygon', async () => {
-        const chain: SupportedChainId = SupportedChainId.POLYGON_MAINNET;
-        const newChain = await provider.switchNetwork(chain);
-        const newNetwork = await provider.getNetwork();
+    // test('switch network to Polygon', async () => {
+    //     const chain: SupportedChainId = SupportedChainId.POLYGON_MAINNET;
+    //     const newChain = await provider.switchNetwork(chain);
+    //     const newNetwork = await provider.getNetwork();
 
-        expect(newChain.id).toBe(SupportedChainId.POLYGON_MAINNET);
-        expect(newChain.name).toBe('Polygon');
-        expect(newChain.network).toBe('Polygon');
-        expect(newNetwork.chainId).toBe(SupportedChainId.POLYGON_MAINNET);
-        expect(newNetwork.name).toBe('Polygon');
-    });
+    //     expect(newChain.id).toBe(SupportedChainId.POLYGON_MAINNET);
+    //     expect(newChain.name).toBe('Polygon');
+    //     expect(newChain.network).toBe('Polygon');
+    //     expect(newNetwork.chainId).toBe(SupportedChainId.POLYGON_MAINNET);
+    //     expect(newNetwork.name).toBe('Polygon');
+    // });
 
     test('Get new Signer', () => {
         const signer = provider.getSigner();

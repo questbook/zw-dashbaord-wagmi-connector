@@ -18,6 +18,7 @@ import {
     shallowCopy,
     toUtf8Bytes
 } from 'ethers/lib/utils';
+import { SupportedChainId } from './constants/chains';
 import { MetamaskRecovery } from './recovery/MetamaskRecovery';
 import { IStoreable } from './store/IStoreable';
 import { ZeroWalletProvider } from './provider';
@@ -104,7 +105,7 @@ function spelunk(
     if (typeof value === 'string') {
         try {
             return spelunk(JSON.parse(value), requireData);
-        } catch (error) { }
+        } catch (error) {}
     }
 
     return null;
@@ -369,6 +370,28 @@ export class ZeroWalletSigner {
         return this.scwAddress || '';
     }
 
+    async clearStore() {
+        const removeScwAddresses = Object.keys(SupportedChainId)
+            .filter((chainNumberOrName) => !isNaN(Number(chainNumberOrName)))
+            .map((chainNumber) =>
+                this.store.set(`scwAddress-${chainNumber}`, '')
+            );
+
+        return Promise.all([
+            this.store.set('nonce', ''),
+            this.store.set('zeroWalletPrivateKey', ''),
+            ...removeScwAddresses
+        ]);
+    }
+
+    async changeZeroWalletWithStore(newZeroWallet: ethers.Wallet) {
+        await this.clearStore()
+        this.zeroWallet = newZeroWallet.connect(this.provider);
+        await this.store.set('zeroWalletPrivateKey', newZeroWallet.privateKey);
+
+        this.provider.emit('accountsChanged', [this.zeroWallet.address]);
+    }
+
     async changeZeroWallet(newZeroWallet: ethers.Wallet) {
         this.zeroWallet = newZeroWallet.connect(this.provider);
         await this.store.set('zeroWalletPrivateKey', newZeroWallet.privateKey);
@@ -430,7 +453,7 @@ export class ZeroWalletSigner {
 
             // Prevent this error from causing an UnhandledPromiseException
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            tx.to.catch(() => { });
+            tx.to.catch(() => {});
         }
 
         // Do not allow mixing pre-eip-1559 and eip-1559 properties
@@ -760,9 +783,7 @@ export class ZeroWalletSigner {
             throw new Error('Zero Wallet is not initialized yet');
         }
 
-        const safeTXBody = await this.buildTransaction(
-            transaction
-        );
+        const safeTXBody = await this.buildTransaction(transaction);
 
         const chainId = (await this.provider.getNetwork()).chainId;
 
@@ -872,8 +893,10 @@ export class ZeroWalletSigner {
         });
     }
 
-    async signBuiltTransaction(scwAddress: string, safeTXBody: BuildExecTransactionType) {
-
+    async signBuiltTransaction(
+        scwAddress: string,
+        safeTXBody: BuildExecTransactionType
+    ) {
         const chainId = (await this.provider.getNetwork()).chainId;
 
         const signature = await this._signTypedData(
@@ -901,11 +924,12 @@ export class ZeroWalletSigner {
             chainId: this.getProvider().zeroWalletNetwork.chainId
         };
 
-        const safeTXBody = await this.buildTransaction(
-            transactionWithChainId
-        );
+        const safeTXBody = await this.buildTransaction(transactionWithChainId);
 
-        const signature = await this.signBuiltTransaction(this.scwAddress!, safeTXBody);
+        const signature = await this.signBuiltTransaction(
+            this.scwAddress!,
+            safeTXBody
+        );
         const nonce = await this.getNonce();
         const signedNonce = await this.signNonce(nonce);
 
@@ -1056,7 +1080,7 @@ export class ZeroWalletSigner {
         });
         const { safeTXBody, scwAddress } = response.data;
 
-        await this.store.set('scwAddress', scwAddress);
+        await this.store.set(`scwAddress-${tx.chainId}`, scwAddress);
         this.scwAddress = scwAddress;
 
         const safeTXBodyWithNonce: BuildExecTransactionType = {
@@ -1085,13 +1109,13 @@ export class ZeroWalletSigner {
     async deployScw(): Promise<void> {
         await this.initSignerPromise;
 
-        const _scwAddress = await this.store.get('scwAddress');
-        
-        if(_scwAddress){
+        const _scwAddress = await this.store.get(`scwAddress-${await this.getChainId()}`);
+
+        if (_scwAddress) {
             this.scwAddress = _scwAddress;
             return;
         }
-        
+
         const nonce = await this.getNonce();
         const signedNonce = await this.signNonce(nonce);
 
@@ -1113,8 +1137,8 @@ export class ZeroWalletSigner {
         );
 
         this.scwAddress = newScwAddress;
-        await this.store.set('scwAddress', newScwAddress);
-        
+        await this.store.set(`scwAddress-${await this.getChainId()}`, newScwAddress);
+
         this.provider.emit('message', {
             type: 'scwAddress',
             data: newScwAddress

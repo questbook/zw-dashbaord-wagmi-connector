@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { ethers } from 'ethers';
 import { deepCopy, fetchJson } from 'ethers/lib/utils';
-import { Chain } from 'wagmi';
-import { chainsNames, SupportedChainId } from './constants/chains';
 import { IStoreable } from './store/IStoreable';
 import { ZeroWalletSigner } from './signer';
 import { RecoveryConfig } from './types';
@@ -31,13 +29,13 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
     recovery: RecoveryConfig | undefined;
 
     constructor(
-        network: ethers.providers.Network,
+        network: ethers.providers.Network & { url?: string },
         store: IStoreable,
         zeroWalletServerDomain: string,
         zeroWalletProjectApiKey: string,
         recoveryConfig?: RecoveryConfig
     ) {
-        super("", network);
+        super(network.url, network);
         this.zeroWalletServerDomain = zeroWalletServerDomain;
         this.zeroWalletProjectApiKey = zeroWalletProjectApiKey;
         this.store = store;
@@ -124,16 +122,8 @@ export class ZeroWalletProvider extends ethers.providers.JsonRpcProvider {
         return result;
     }
 
-    async switchNetwork(chainId: SupportedChainId): Promise<Chain> {
-        this.zeroWalletNetwork.chainId = chainId;
-
-        this.zeroWalletNetwork.name = chainsNames[chainId];
-
-        return {
-            id: this.zeroWalletNetwork.chainId,
-            name: this.zeroWalletNetwork.name,
-            network: this.zeroWalletNetwork.name
-        } as Chain;
+    async connectToConnector() {
+        this.emit('chainChanged', this.network.chainId)
     }
 
     detectNetwork(): Promise<ethers.providers.Network> {

@@ -17,7 +17,7 @@ export class ZeroWalletConnector extends Connector<
     readonly name = 'Zero Wallet';
 
     private provider: ZeroWalletProvider;
-    private providers: { [key in SupportedChainId]?: ZeroWalletProvider } = {};
+    // private providers: { [key in SupportedChainId]?: ZeroWalletProvider } = {};
     private store: IStoreable;
 
     constructor(config: {
@@ -31,21 +31,21 @@ export class ZeroWalletConnector extends Connector<
         this.onChainChanged = this.onChainChanged.bind(this);
         this.onDisconnect = this.onDisconnect.bind(this);
 
-        config.chains?.forEach((chain) => {
-            if (chain) {
-                const provider = (this.provider = new ZeroWalletProvider(
-                    { chainId: chain.id, name: chain.name },
-                    this.store,
-                    config.options.zeroWalletServerDomain,
-                    config.options.zeroWalletProjectApiKey,
-                    config.options.recovery
-                ));
+        if (config.chains) {
+            const chain = config.chains[0];
 
-                this.providers[chain.id] = provider;
-
-                if (!this.provider) this.provider = this.providers[chain.id];
-            }
-        });
+            this.provider = new ZeroWalletProvider(
+                {
+                    chainId: chain.id,
+                    name: chain.name,
+                    url: chain.rpcUrls.default
+                },
+                this.store,
+                config.options.zeroWalletServerDomain,
+                config.options.zeroWalletProjectApiKey,
+                config.options.recovery
+            );
+        }
     }
 
     /**
@@ -138,15 +138,34 @@ export class ZeroWalletConnector extends Connector<
     }
 
     async switchChain(chainId: SupportedChainId): Promise<Chain> {
-        if (
-            !(chainId in this.providers) ||
-            this.providers[chainId] === undefined
-        ) {
-            throw new Error('No provider found for chainId: ' + chainId);
-        }
+        const chain = this.chains.find((c) => c.id === chainId);
+        if (!chain) throw new Error('No chain found for chainId: ' + chainId);
 
-        this.provider = this.providers[chainId]!;
-        return this.provider.switchNetwork(chainId);
+        // disconnecting old provider
+        const oldProvider = this.provider;
+        oldProvider.removeListener('accountsChanged', this.onAccountsChanged);
+        oldProvider.removeListener('chainChanged', this.onChainChanged);
+        oldProvider.removeListener('disconnect', this.onDisconnect);
+
+        // creating a new provider
+        const newProvider = (this.provider = new ZeroWalletProvider(
+            {
+                chainId: chain.id,
+                name: chain.name,
+                url: chain.rpcUrls.default
+            },
+            this.store,
+            this.options.zeroWalletServerDomain,
+            this.options.zeroWalletProjectApiKey,
+            this.options.recovery
+        ));
+
+        newProvider.on('accountsChanged', this.onAccountsChanged);
+        newProvider.on('chainChanged', this.onChainChanged);
+        newProvider.on('disconnect', this.onDisconnect);
+        this.provider = newProvider;
+        this.provider.connectToConnector();
+        return chain;
     }
 
     protected onAccountsChanged(accounts: string[]) {
